@@ -20,8 +20,9 @@ class SingleItemScreen extends StatelessWidget {
       // Widget para la imagen con margen y bordes redondeados
       Widget imageWidget(String imageUrl) {
         return Padding(
-          padding:
-              const EdgeInsets.all(30.0), // Ajusta el padding según necesites
+          padding: const EdgeInsets.symmetric(
+              horizontal: 30,
+              vertical: 10), // Ajusta el padding según necesites
           child: ClipRRect(
             borderRadius: BorderRadius.circular(
                 50.0), // Ajusta el radio del borde según necesites
@@ -31,10 +32,15 @@ class SingleItemScreen extends StatelessWidget {
               fit: BoxFit.contain,
               errorBuilder: (context, error, stackTrace) {
                 // Retorna una imagen predeterminada en caso de error
-                return Image.asset(
-                  "images/tools/cooking.png",
-                  width: double.infinity,
-                  fit: BoxFit.contain,
+                return Container(
+                  child: Padding(
+                    padding: const EdgeInsets.all(30.0),
+                    child: Image.asset(
+                      "images/tools/4uRestIcon-black.png",
+                      width: double.infinity,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
                 );
               },
             ),
@@ -94,8 +100,16 @@ class SingleItemScreen extends StatelessWidget {
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
                               item.description,
-                              style:
-                                  TextStyle(color: Colors.black, fontSize: 28),
+                              style: Theme.of(context)
+                                      .textTheme
+                                      .headline6
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 22,
+                                      ) ??
+                                  const TextStyle(
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold),
                               textAlign: TextAlign.center,
                             ),
                           ),
@@ -121,12 +135,13 @@ class SingleItemScreen extends StatelessWidget {
                                   const EdgeInsets.symmetric(vertical: 8.0),
                               child: Text(
                                 "Personalizalo a tu gusto",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize:
-                                      24, // Aumentando el tamaño de la letra
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText2
+                                        ?.copyWith(
+                                          fontSize: 18,
+                                        ) ??
+                                    const TextStyle(fontSize: 14),
                                 textAlign: TextAlign.center,
                               ),
                             ),
@@ -140,11 +155,13 @@ class SingleItemScreen extends StatelessWidget {
                                 return ListTile(
                                   title: Text(
                                     group.alias,
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18,
-                                    ),
+                                    style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText2
+                                            ?.copyWith(
+                                              fontSize: 18,
+                                            ) ??
+                                        const TextStyle(fontSize: 14),
                                   ),
                                   subtitle: ListView.builder(
                                     shrinkWrap: true,
@@ -164,18 +181,36 @@ class SingleItemScreen extends StatelessWidget {
                                           SizedBox(width: 8),
                                           Text(
                                             modifier.alias,
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 23),
+                                            style: Theme.of(context)
+                                                    .textTheme
+                                                    .headline6
+                                                    ?.copyWith(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 22,
+                                                    ) ??
+                                                const TextStyle(
+                                                    fontSize: 22,
+                                                    fontWeight:
+                                                        FontWeight.bold),
                                           ),
                                           Spacer(),
                                           Text(
                                             modifier.price != 0
-                                                ? "\$${modifier.price.toString()}"
+                                                ? "\$${modifier.price?.toStringAsFixed(2)}"
                                                 : '-',
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 23),
+                                            style: Theme.of(context)
+                                                    .textTheme
+                                                    .headline6
+                                                    ?.copyWith(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 22,
+                                                    ) ??
+                                                const TextStyle(
+                                                    fontSize: 22,
+                                                    fontWeight:
+                                                        FontWeight.bold),
                                           ),
                                         ],
                                       );
