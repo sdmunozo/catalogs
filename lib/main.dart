@@ -5,8 +5,10 @@ import 'dart:js' as js;
 import 'package:menu/providers/branch_catalog_provider.dart';
 import 'package:menu/screens/welcome_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() {
+  //await dotenv.load(fileName: ".env");
   runApp(MyApp());
 }
 

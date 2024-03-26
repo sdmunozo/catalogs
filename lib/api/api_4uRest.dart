@@ -3,8 +3,7 @@ import 'package:dio/dio.dart';
 
 class Api4uRest {
   static Dio _dio = Dio()
-    ..options.baseUrl =
-        'https://d206-2806-230-100e-be6b-b10f-d7c3-c4c9-e822.ngrok-free.app/api'
+    ..options.baseUrl = 'https://netship20240323121328.azurewebsites.net/api'
     ..options.headers = {
       'ngrok-skip-browser-warning': 'true',
       'Content-Type': 'application/json',
