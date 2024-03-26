@@ -45,9 +45,9 @@ class WelcomeScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.black,
                 image: DecorationImage(
-                  image: NetworkImage(
-                      branchCatalogProvider.branchCatalog?.menuBackground ??
-                          ''),
+                  image: NetworkImage(branchCatalogProvider
+                          .branchCatalog?.menuBackground ??
+                      'https://api4urest.blob.core.win2dows.net/brands/System.Func%601%5BSystem.Guid%5D'),
                   fit: BoxFit.cover,
                   opacity: 0.4,
                 ),

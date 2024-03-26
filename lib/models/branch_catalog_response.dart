@@ -11,6 +11,8 @@ String branchCatalogResponseToJson(BranchCatalogResponse data) =>
     json.encode(data.toJson());
 
 class BranchCatalogResponse {
+  String brandId;
+  String branchId;
   String brandName;
   String branchName;
   String instagramLink;
@@ -22,6 +24,8 @@ class BranchCatalogResponse {
   List<Catalog> catalogs;
 
   BranchCatalogResponse({
+    required this.brandId,
+    required this.branchId,
     required this.brandName,
     required this.branchName,
     required this.instagramLink,
@@ -35,38 +39,44 @@ class BranchCatalogResponse {
 
   factory BranchCatalogResponse.fromJson(Map<String, dynamic> json) =>
       BranchCatalogResponse(
-        brandName: json["brand_name"],
-        branchName: json["branch_name"],
-        instagramLink: json["instagram_link"],
-        facebookLink: json["facebook_link"],
-        websiteLink: json["website_link"],
-        brandLogo: json["brand_logo"],
-        brandSlogan: json["brand_slogan"],
-        menuBackground: json["menu_background"],
+        brandId: json["brandId"],
+        branchId: json["branchId"],
+        brandName: json["brandName"],
+        branchName: json["branchName"],
+        instagramLink: json["instagramLink"],
+        facebookLink: json["facebookLink"],
+        websiteLink: json["websiteLink"],
+        brandLogo: json["brandLogo"],
+        brandSlogan: json["brandSlogan"],
+        menuBackground: json["menuBackground"],
         catalogs: List<Catalog>.from(
             json["catalogs"].map((x) => Catalog.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
-        "brand_name": brandName,
-        "branch_name": branchName,
-        "instagram_link": instagramLink,
-        "facebook_link": facebookLink,
-        "website_link": websiteLink,
-        "brand_logo": brandLogo,
-        "brand_slogan": brandSlogan,
-        "menu_background": menuBackground,
+        "brandId": brandId,
+        "branchId": branchId,
+        "brandName": brandName,
+        "branchName": branchName,
+        "instagramLink": instagramLink,
+        "facebookLink": facebookLink,
+        "websiteLink": websiteLink,
+        "brandLogo": brandLogo,
+        "brandSlogan": brandSlogan,
+        "menuBackground": menuBackground,
         "catalogs": List<dynamic>.from(catalogs.map((x) => x.toJson())),
       };
 }
 
 class Catalog {
+  String id;
   String name;
   String description;
   String icon;
   List<Category> categories;
 
   Catalog({
+    required this.id,
     required this.name,
     required this.description,
     required this.icon,
@@ -74,6 +84,7 @@ class Catalog {
   });
 
   factory Catalog.fromJson(Map<String, dynamic> json) => Catalog(
+        id: json["id"],
         name: json["name"],
         description: json["description"],
         icon: json["icon"],
@@ -126,7 +137,7 @@ class Item {
   String alias;
   String description;
   String icon;
-  double price;
+  String price;
   List<Item> modifiersGroups;
   List<Item> modifiers;
 
@@ -143,7 +154,7 @@ class Item {
         alias: json["alias"],
         description: json["description"],
         icon: json["icon"],
-        price: json["price"]?.toDouble() ?? 0.0,
+        price: json["price"] ?? "0",
         modifiersGroups: json["modifiersGroups"] == null
             ? []
             : List<Item>.from(

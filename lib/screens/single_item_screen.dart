@@ -118,11 +118,14 @@ class SingleItemScreen extends StatelessWidget {
                               padding:
                                   const EdgeInsets.symmetric(vertical: 8.0),
                               child: Text(
-                                "\$${item.price?.toStringAsFixed(2)}",
+                                (item.price != null &&
+                                        item.price.isNotEmpty &&
+                                        item.price != '0')
+                                    ? "\$${double.parse(item.price)?.toStringAsFixed(2)}"
+                                    : 'Varias Opciones de \$',
                                 style: TextStyle(
                                   color: Colors.green,
-                                  fontSize:
-                                      24, // Aumentando el tamaño de la letra
+                                  fontSize: 24,
                                   fontWeight: FontWeight.bold,
                                 ),
                                 textAlign: TextAlign.center,
@@ -196,8 +199,10 @@ class SingleItemScreen extends StatelessWidget {
                                           ),
                                           Spacer(),
                                           Text(
-                                            modifier.price != 0
-                                                ? "\$${modifier.price?.toStringAsFixed(2)}"
+                                            (modifier.price != null &&
+                                                    modifier.price.isNotEmpty &&
+                                                    modifier.price != '0')
+                                                ? "\$${double.parse(modifier.price)?.toStringAsFixed(2)}"
                                                 : '-',
                                             style: Theme.of(context)
                                                     .textTheme
@@ -208,9 +213,9 @@ class SingleItemScreen extends StatelessWidget {
                                                       fontSize: 22,
                                                     ) ??
                                                 const TextStyle(
-                                                    fontSize: 22,
-                                                    fontWeight:
-                                                        FontWeight.bold),
+                                                  fontSize: 22,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                           ),
                                         ],
                                       );
