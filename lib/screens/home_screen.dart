@@ -99,7 +99,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                   style: GoogleFonts.lato(
                                     fontSize: 28,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.black,
+                                    color: Colors.white,
                                   ),
                                 ),
                               ),
@@ -110,7 +110,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                   textAlign: TextAlign
                                       .center, // Alineo el texto al centro
                                   style: GoogleFonts.pacifico(
-                                      fontSize: 24, color: Colors.black),
+                                      fontSize: 24, color: Colors.white),
                                 ),
                               ),
                             ],
@@ -121,10 +121,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                               fontWeight: FontWeight.bold,
                               fontSize: 14,
                             ),
+                            labelColor: Colors
+                                .white, // Establece el color de las etiquetas activas a blanco
+                            unselectedLabelColor: Colors.white.withOpacity(
+                                0.5), // Etiquetas inactivas en blanco con opacidad
                             tabs: catalogs
                                 .map((catalog) => Tab(text: catalog.name))
                                 .toList(),
                           ),
+
                           Expanded(
                             child: TabBarView(
                               controller: _catalogTabController,
@@ -136,18 +141,22 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                       Column(
                                         children: [
                                           TabBar(
+                                            controller:
+                                                _categoryTabControllers[index],
                                             labelStyle: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 14,
                                             ),
-                                            controller:
-                                                _categoryTabControllers[index],
+                                            labelColor: Colors
+                                                .white, // Color de las etiquetas activas
+                                            unselectedLabelColor: Colors.white
+                                                .withOpacity(
+                                                    0.5), // Color de las etiquetas inactivas
+                                            isScrollable: true,
                                             tabs: catalog.categories
                                                 .map((category) =>
                                                     Tab(text: category.name))
                                                 .toList(),
-                                            isScrollable:
-                                                true, // Para hacer scroll si hay muchas categorías
                                           ),
                                           Expanded(
                                             child: TabBarView(
