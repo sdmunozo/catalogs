@@ -30,13 +30,13 @@ class MenuItemCard extends StatelessWidget {
         List<Widget> modifierWidgets = group.modifiers
             .map((modifier) => Text(
                   '• ${modifier.alias} - \$${double.parse(modifier.price).toStringAsFixed(2)}',
-                  style: TextStyle(fontSize: 16),
+                  style: TextStyle(fontSize: 14),
                 ))
             .toList();
 
         if (modifierWidgets.isNotEmpty) {
           widgetsList.add(Padding(
-            padding: const EdgeInsets.only(top: 8.0),
+            padding: const EdgeInsets.only(top: 2.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -55,7 +55,8 @@ class MenuItemCard extends StatelessWidget {
 
     return Card(
       elevation: 4.0,
-      margin: const EdgeInsets.all(8.0),
+      margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+      //const EdgeInsets.all(2.0),
       child: InkWell(
         onTap: onTap,
         child: Padding(
@@ -71,7 +72,7 @@ class MenuItemCard extends StatelessWidget {
                     Text(
                       item.alias,
                       style: Theme.of(context).textTheme.headline6?.copyWith(
-                              fontWeight: FontWeight.bold, fontSize: 18) ??
+                              fontWeight: FontWeight.bold, fontSize: 16) ??
                           const TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
                     ),

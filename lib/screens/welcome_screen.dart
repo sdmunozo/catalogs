@@ -64,7 +64,7 @@ class WelcomeScreen extends StatelessWidget {
                           textAlign:
                               TextAlign.center, // Alineo el texto al centro
                           style: GoogleFonts.pacifico(
-                              fontSize: 40, color: Colors.white),
+                              fontSize: 35, color: Colors.white),
                         ),
                       ),
                       Center(
@@ -74,7 +74,7 @@ class WelcomeScreen extends StatelessWidget {
                           textAlign:
                               TextAlign.center, // Alineo el texto al centro
                           style: GoogleFonts.pacifico(
-                              fontSize: 35, color: Colors.white),
+                              fontSize: 30, color: Colors.white),
                         ),
                       ),
                     ],
