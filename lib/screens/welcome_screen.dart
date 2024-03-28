@@ -7,21 +7,39 @@ import 'package:url_launcher/url_launcher.dart';
 
 class WelcomeScreen extends StatelessWidget {
   void _launchUrl(Uri url) async {
-    try {
-      final bool launched = await launchUrl(url);
-      if (!launched) {}
-    } catch (e) {}
+    if (!await launchUrl(url)) {
+      // Si falla el lanzamiento de la URL, puedes manejarlo aquí
+      print('No se pudo lanzar $url');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final branchCatalogProvider = Provider.of<BranchCatalogProvider>(context);
+    // Utilizamos Consumer para escuchar los cambios en BranchCatalogProvider
+    return Consumer<BranchCatalogProvider>(
+      builder: (context, branchCatalogProvider, child) {
+        // Verificamos si los datos ya están disponibles
+        if (branchCatalogProvider.branchCatalog == null) {
+          // Datos aún no están disponibles, mostramos un indicador de carga
+          return Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
+        // Datos disponibles, construimos la UI con los datos
+        return _buildContent(context, branchCatalogProvider);
+      },
+    );
+  }
+
+  Widget _buildContent(
+      BuildContext context, BranchCatalogProvider branchCatalogProvider) {
+    // Aquí extraemos los datos del provider
     final brandName =
         branchCatalogProvider.branchCatalog?.brandName ?? 'Empresa';
     final branchName =
         branchCatalogProvider.branchCatalog?.branchName ?? 'Sucursal';
-
-    // Actualizar los enlaces basándose en los datos del provider
     final Uri _url_insta = Uri.parse(
         branchCatalogProvider.branchCatalog?.instagramLink ??
             'https://www.instagram.com/');
@@ -33,6 +51,7 @@ class WelcomeScreen extends StatelessWidget {
             'https://www.4urest.mx/');
     final brand_slogan = branchCatalogProvider.branchCatalog?.brandSlogan ??
         '¡Visitanos en nuestras redes sociales!';
+
     return Material(
       child: Container(
         color: Colors.black,
