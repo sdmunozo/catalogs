@@ -141,7 +141,6 @@ class WelcomeScreen extends StatelessWidget {
                             color: Colors.white.withOpacity(0.8),
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            decoration: TextDecoration.underline,
                           ),
                         ),
                       ),

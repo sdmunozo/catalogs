@@ -84,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                       'images/tools/FruteriaLaUnica_bg.jpg')
                                   as ImageProvider<Object>,
                           fit: BoxFit.cover,
-                          opacity: 0.4,
+                          opacity: 1,
                         ),
                       ),
                       child: Column(

@@ -26,9 +26,54 @@ class SingleItemScreen extends StatelessWidget {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(
                 50.0), // Ajusta el radio del borde según necesites
+            child: AspectRatio(
+              aspectRatio: 16 /
+                  9, // Ejemplo de relación de aspecto, ajusta según tus necesidades
+              child: Image.network(
+                imageUrl,
+                fit: BoxFit
+                    .cover, // Puedes ajustar esto para cambiar cómo se ajusta la imagen dentro del contenedor
+                errorBuilder: (context, error, stackTrace) {
+                  // Retorna una imagen predeterminada en caso de error
+                  return Padding(
+                    padding: const EdgeInsets.all(30.0),
+                    child: Image.asset(
+                      "images/tools/4uRestIcon-black.png",
+                      fit: BoxFit.contain,
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+        );
+      }
+
+      // Decide cuál widget de imagen usar basado en si item.icon es null o no
+      if (item.icon != null) {
+        return imageWidget(item.icon!);
+      } else {
+        // Usa una imagen predeterminada si item.icon es null
+        return imageWidget("images/tools/cooking.png");
+      }
+    }
+
+    /*
+
+    Widget buildItemImage() {
+      // Widget para la imagen con margen y bordes redondeados
+      Widget imageWidget(String imageUrl) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(
+              horizontal: 30,
+              vertical: 10), // Ajusta el padding según necesites
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(
+                50.0), // Ajusta el radio del borde según necesites
             child: Image.network(
               imageUrl,
               width: double.infinity,
+              height: double.infinity,
               fit: BoxFit.contain,
               errorBuilder: (context, error, stackTrace) {
                 // Retorna una imagen predeterminada en caso de error
@@ -55,7 +100,7 @@ class SingleItemScreen extends StatelessWidget {
         // Usa una imagen predeterminada si item.icon es null
         return imageWidget("images/tools/cooking.png");
       }
-    }
+    }*/
 
     return Scaffold(
       backgroundColor: Colors.grey[200],
