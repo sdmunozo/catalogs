@@ -61,6 +61,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     final branchName =
         branchCatalogProvider.branchCatalog?.branchName ?? 'Sucursal';
 
+    final priceTextStyle = TextStyle(
+      color: Colors.green,
+      fontSize: 18,
+      fontWeight: FontWeight.bold,
+    );
+
     return Scaffold(
       body: Column(
         children: [
