@@ -1,14 +1,10 @@
-// CODIGO EDITANDO
-
 import 'package:flutter/material.dart';
 import 'dart:js' as js;
 import 'package:menu/providers/branch_catalog_provider.dart';
 import 'package:menu/screens/welcome_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() {
-  //await dotenv.load(fileName: ".env");
   runApp(MyApp());
 }
 
@@ -27,13 +23,10 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<String> _getBranchLink() async {
-    await Future.delayed(
-        Duration.zero); // Espera hasta que el frame actual esté dibujado
+    await Future.delayed(Duration.zero);
     String currentUrl = js.context['location']['href'];
-    print('URL actual: $currentUrl'); // Impresión de depuración
     List<String> urlParts = currentUrl.split('/');
     String branchLink = urlParts.last;
-    print('Branch link obtenido: $branchLink'); // Impresión de depuración
     return branchLink;
   }
 
@@ -65,14 +58,11 @@ class _MyAppState extends State<MyApp> {
                 } else {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     if (snapshot.hasData) {
-                      print(
-                          'Iniciando la carga del catálogo con branch link: ${snapshot.data}');
-                      // Aquí llamarías a tu función para cargar los datos usando el provider
                       Provider.of<BranchCatalogProvider>(context, listen: false)
                           .fetchBranchCatalog(snapshot.data!);
                     }
                   });
-                  return WelcomeScreen(); // La app está lista para ser mostrada
+                  return WelcomeScreen();
                 }
               },
             );
