@@ -17,6 +17,143 @@ class MenuItemCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool shouldShowPrice =
         item.price.isNotEmpty && item.price != '0' && item.price != '0.00';
+    final TextStyle priceStyle = TextStyle(
+        color: Colors.green,
+        fontStyle: FontStyle.italic,
+        fontWeight: FontWeight.bold);
+
+    // Creamos una función para manejar el texto y estilo de los precios.
+    Widget buildPriceText(String text, bool isPrice) {
+      return Text(
+        text,
+        style: isPrice
+            ? priceStyle
+            : null, // Aplica el estilo verde solo si es precio.
+      );
+    }
+
+    List<Widget> buildModifiersWidgets() {
+      List<Widget> widgetsList = [];
+      for (var group in item.modifiersGroups) {
+        List<Widget> modifierWidgets = [];
+
+        for (var modifier in group.modifiers) {
+          // Verifica si se debe mostrar el precio del modificador.
+          final bool shouldShowModifierPrice = group.isSelectable != 'True' &&
+              modifier.price.isNotEmpty &&
+              modifier.price != '0' &&
+              modifier.price != '0.00';
+          String priceText = shouldShowModifierPrice
+              ? ' - \$${double.parse(modifier.price).toStringAsFixed(2)}'
+              : '';
+
+          // Construye el texto del modificador con o sin precio.
+          Widget modifierTextWidget = Row(
+            children: [
+              Text('• ${modifier.alias}'),
+              if (shouldShowModifierPrice) buildPriceText(priceText, true),
+            ],
+          );
+
+          modifierWidgets.add(modifierTextWidget);
+        }
+
+        if (modifierWidgets.isNotEmpty) {
+          widgetsList.add(Padding(
+            padding: const EdgeInsets.only(top: 2.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(group.alias,
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                ...modifierWidgets,
+              ],
+            ),
+          ));
+        }
+      }
+      return widgetsList;
+    }
+
+    return Card(
+      elevation: 4.0,
+      margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(item.alias,
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold)),
+                    if (shouldShowPrice || item.description.isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          if (!shouldShowPrice) Text(item.description),
+                          if (shouldShowPrice) ...[
+                            buildPriceText(
+                                '\$${double.parse(item.price).toStringAsFixed(2)}',
+                                true),
+                            Text(' - ${item.description}'),
+                          ],
+                        ],
+                      ),
+                    ],
+                    ...buildModifiersWidgets(),
+                  ],
+                ),
+              ),
+              if (item.icon != null && item.icon!.isNotEmpty) ...[
+                const SizedBox(width: 16),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.network(
+                    item.icon!,
+                    width: 100,
+                    height: 100,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) =>
+                        Container(width: 0, height: 0),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
+
+/*import 'package:flutter/material.dart';
+import 'package:menu/models/branch_catalog_response.dart'; // Asegúrate de que este import corresponda con tus modelos.
+
+class MenuItemCard extends StatelessWidget {
+  final String cardType;
+  final Item item;
+  final VoidCallback onTap;
+
+  const MenuItemCard({
+    Key? key,
+    required this.cardType,
+    required this.item,
+    required this.onTap,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final bool shouldShowPrice =
+        item.price.isNotEmpty && item.price != '0' && item.price != '0.00';
     final bool shouldShowContainer =
         shouldShowPrice || item.description.isNotEmpty;
     final String displayText = shouldShowPrice
@@ -119,6 +256,7 @@ class MenuItemCard extends StatelessWidget {
   }
 }
 
+*/
 
 /*import 'package:flutter/material.dart';
 import 'package:menu/models/branch_catalog_response.dart'; // Asegúrate de que este import corresponda con tus modelos.

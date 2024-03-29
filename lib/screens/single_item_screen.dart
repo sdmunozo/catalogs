@@ -4,7 +4,7 @@ import 'package:menu/models/branch_catalog_response.dart'; // Asegúrate de tene
 import 'package:url_launcher/url_launcher.dart';
 
 class SingleItemScreen extends StatelessWidget {
-  final Item item; // Asegúrate de que 'Item' esté definido en tu modelo
+  final Item item;
 
   const SingleItemScreen({Key? key, required this.item}) : super(key: key);
 
@@ -20,21 +20,15 @@ class SingleItemScreen extends StatelessWidget {
       // Widget para la imagen con margen y bordes redondeados
       Widget imageWidget(String imageUrl) {
         return Padding(
-          padding: const EdgeInsets.symmetric(
-              horizontal: 30,
-              vertical: 10), // Ajusta el padding según necesites
+          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(
-                50.0), // Ajusta el radio del borde según necesites
+            borderRadius: BorderRadius.circular(50.0),
             child: AspectRatio(
-              aspectRatio:
-                  1, // Ejemplo de relación de aspecto, ajusta según tus necesidades
+              aspectRatio: 1,
               child: Image.network(
                 imageUrl,
-                fit: BoxFit
-                    .cover, // Puedes ajustar esto para cambiar cómo se ajusta la imagen dentro del contenedor
+                fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
-                  // Retorna una imagen predeterminada en caso de error
                   return Padding(
                     padding: const EdgeInsets.all(30.0),
                     child: Image.asset(
@@ -57,6 +51,15 @@ class SingleItemScreen extends StatelessWidget {
         return imageWidget("images/tools/cooking.png");
       }
     }
+
+    bool isAnyGroupSelectable =
+        item.modifiersGroups.any((group) => group.isSelectable == 'True');
+
+    final priceTextStyle = TextStyle(
+      color: Colors.green, // Color del texto del precio
+      fontSize: 20,
+      fontWeight: FontWeight.bold,
+    );
 
     return Scaffold(
       backgroundColor: Colors.grey[200],
@@ -114,6 +117,19 @@ class SingleItemScreen extends StatelessWidget {
                               textAlign: TextAlign.center,
                             ),
                           ),
+                          isAnyGroupSelectable &&
+                                  item.price != null &&
+                                  item.price.isNotEmpty &&
+                                  item.price != '0'
+                              ? Padding(
+                                  padding: const EdgeInsets.only(top: 8.0),
+                                  child: Text(
+                                    "\$${double.parse(item.price).toStringAsFixed(2)}",
+                                    style: priceTextStyle,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                )
+                              : Container(),
                           if (item.modifiersGroups.isEmpty) ...[
                             Padding(
                               padding:
@@ -124,11 +140,7 @@ class SingleItemScreen extends StatelessWidget {
                                         item.price != '0')
                                     ? "\$${double.parse(item.price)?.toStringAsFixed(2)}"
                                     : 'Varias Opciones de \$',
-                                style: TextStyle(
-                                  color: Colors.green,
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                style: priceTextStyle,
                                 textAlign: TextAlign.center,
                               ),
                             ),
@@ -203,18 +215,7 @@ class SingleItemScreen extends StatelessWidget {
                                                     modifier.price != '0')
                                                 ? "\$${double.parse(modifier.price)?.toStringAsFixed(2)}"
                                                 : '',
-                                            style: Theme.of(context)
-                                                    .textTheme
-                                                    .headline6
-                                                    ?.copyWith(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 18,
-                                                    ) ??
-                                                const TextStyle(
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
+                                            style: priceTextStyle,
                                           ),
                                         ],
                                       );
