@@ -15,7 +15,8 @@ class MenuItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool shouldShowPrice = item.price.isNotEmpty && item.price != '0';
+    final bool shouldShowPrice =
+        item.price.isNotEmpty && item.price != '0' && item.price != '0.00';
     final bool shouldShowContainer =
         shouldShowPrice || item.description.isNotEmpty;
     final String displayText = shouldShowPrice

@@ -27,8 +27,8 @@ class SingleItemScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(
                 50.0), // Ajusta el radio del borde según necesites
             child: AspectRatio(
-              aspectRatio: 16 /
-                  9, // Ejemplo de relación de aspecto, ajusta según tus necesidades
+              aspectRatio:
+                  1, // Ejemplo de relación de aspecto, ajusta según tus necesidades
               child: Image.network(
                 imageUrl,
                 fit: BoxFit
@@ -58,50 +58,6 @@ class SingleItemScreen extends StatelessWidget {
       }
     }
 
-    /*
-
-    Widget buildItemImage() {
-      // Widget para la imagen con margen y bordes redondeados
-      Widget imageWidget(String imageUrl) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(
-              horizontal: 30,
-              vertical: 10), // Ajusta el padding según necesites
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(
-                50.0), // Ajusta el radio del borde según necesites
-            child: Image.network(
-              imageUrl,
-              width: double.infinity,
-              height: double.infinity,
-              fit: BoxFit.contain,
-              errorBuilder: (context, error, stackTrace) {
-                // Retorna una imagen predeterminada en caso de error
-                return Container(
-                  child: Padding(
-                    padding: const EdgeInsets.all(30.0),
-                    child: Image.asset(
-                      "images/tools/4uRestIcon-black.png",
-                      width: double.infinity,
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        );
-      }
-
-      // Decide cuál widget de imagen usar basado en si item.icon es null o no
-      if (item.icon != null) {
-        return imageWidget(item.icon!);
-      } else {
-        // Usa una imagen predeterminada si item.icon es null
-        return imageWidget("images/tools/cooking.png");
-      }
-    }*/
-
     return Scaffold(
       backgroundColor: Colors.grey[200],
       body: SafeArea(
@@ -122,7 +78,7 @@ class SingleItemScreen extends StatelessWidget {
                         Expanded(
                           child: Center(
                             child: Text(
-                              item.alias, // Asegúrate de que 'alias' es un campo válido de 'Item'
+                              item.alias,
                               style: GoogleFonts.pacifico(
                                   color: Colors.white, fontSize: 25),
                             ),
@@ -195,8 +151,7 @@ class SingleItemScreen extends StatelessWidget {
                             ),
                             ListView.builder(
                               shrinkWrap: true,
-                              physics:
-                                  NeverScrollableScrollPhysics(), // Importante para evitar el desplazamiento anidado
+                              physics: NeverScrollableScrollPhysics(),
                               itemCount: item.modifiersGroups.length,
                               itemBuilder: (context, index) {
                                 final group = item.modifiersGroups[index];
@@ -213,8 +168,7 @@ class SingleItemScreen extends StatelessWidget {
                                   ),
                                   subtitle: ListView.builder(
                                     shrinkWrap: true,
-                                    physics:
-                                        NeverScrollableScrollPhysics(), // Esto previene el scrolling interno de esta lista
+                                    physics: NeverScrollableScrollPhysics(),
                                     itemCount: group.modifiers.length,
                                     itemBuilder: (context, modIndex) {
                                       final modifier =
@@ -235,10 +189,10 @@ class SingleItemScreen extends StatelessWidget {
                                                     ?.copyWith(
                                                       fontWeight:
                                                           FontWeight.bold,
-                                                      fontSize: 22,
+                                                      fontSize: 18,
                                                     ) ??
                                                 const TextStyle(
-                                                    fontSize: 22,
+                                                    fontSize: 18,
                                                     fontWeight:
                                                         FontWeight.bold),
                                           ),
@@ -248,17 +202,17 @@ class SingleItemScreen extends StatelessWidget {
                                                     modifier.price.isNotEmpty &&
                                                     modifier.price != '0')
                                                 ? "\$${double.parse(modifier.price)?.toStringAsFixed(2)}"
-                                                : '-',
+                                                : '',
                                             style: Theme.of(context)
                                                     .textTheme
                                                     .headline6
                                                     ?.copyWith(
                                                       fontWeight:
                                                           FontWeight.bold,
-                                                      fontSize: 22,
+                                                      fontSize: 18,
                                                     ) ??
                                                 const TextStyle(
-                                                  fontSize: 22,
+                                                  fontSize: 18,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                           ),
@@ -327,3 +281,48 @@ class SingleItemScreen extends StatelessWidget {
     );
   }
 }
+
+
+    /*
+
+    Widget buildItemImage() {
+      // Widget para la imagen con margen y bordes redondeados
+      Widget imageWidget(String imageUrl) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(
+              horizontal: 30,
+              vertical: 10), // Ajusta el padding según necesites
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(
+                50.0), // Ajusta el radio del borde según necesites
+            child: Image.network(
+              imageUrl,
+              width: double.infinity,
+              height: double.infinity,
+              fit: BoxFit.contain,
+              errorBuilder: (context, error, stackTrace) {
+                // Retorna una imagen predeterminada en caso de error
+                return Container(
+                  child: Padding(
+                    padding: const EdgeInsets.all(30.0),
+                    child: Image.asset(
+                      "images/tools/4uRestIcon-black.png",
+                      width: double.infinity,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        );
+      }
+
+      // Decide cuál widget de imagen usar basado en si item.icon es null o no
+      if (item.icon != null) {
+        return imageWidget(item.icon!);
+      } else {
+        // Usa una imagen predeterminada si item.icon es null
+        return imageWidget("images/tools/cooking.png");
+      }
+    }*/
