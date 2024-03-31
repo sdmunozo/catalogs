@@ -309,7 +309,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     duration: Duration(milliseconds: 500),
                     curve: Curves.easeOut);
               },
-              child: Icon(Icons.arrow_upward),
+              child: Icon(Icons.keyboard_double_arrow_up_outlined),
               backgroundColor: Colors.blue,
               heroTag: "upFAB",
             ),
