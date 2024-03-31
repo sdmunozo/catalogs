@@ -299,7 +299,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   MaterialPageRoute(builder: (context) => WelcomeScreen()),
                 );
               },
-              child: Icon(Icons.home),
+              child: Icon(Icons.arrow_back_ios),
               heroTag: "homeFAB",
               backgroundColor: Color(0xFFE57734),
             ),
