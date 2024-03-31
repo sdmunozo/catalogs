@@ -20,6 +20,7 @@ class BranchCatalogProvider extends ChangeNotifier {
         _branchCatalog = BranchCatalogResponse.fromJson(response);
       } catch (e) {
         print('Error al obtener el catálogo de la sucursal: $e');
+        throw Exception('Error al obtener el catálogo de la sucursal');
       } finally {
         _isLoading = false;
         notifyListeners();

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:menu/bloc/scroll_tabbar_bloc.dart';
-import 'dart:js'
-    as js; // Asume el uso de la biblioteca dart:js para interoperabilidad con JavaScript
-import 'dart:async'; // Importante para usar Timer
+import 'dart:js' as js;
+import 'dart:async';
 import 'package:menu/providers/branch_catalog_provider.dart';
-import 'package:menu/screens/screen_not_found.dart';
+import 'package:menu/screens/not_found_screen.dart';
 import 'package:menu/screens/welcome_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -19,6 +18,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   late Future<String> _branchLinkFuture;
+  bool _hasError = false;
 
   @override
   void initState() {
@@ -35,7 +35,10 @@ class _MyAppState extends State<MyApp> {
     if (branchLink == branchLink.toLowerCase() && branchLink.contains('-')) {
       return branchLink;
     } else {
-      throw Exception("URL no válida");
+      setState(() {
+        _hasError = true;
+      });
+      return Future.error("URL no válida");
     }
   }
 
@@ -56,22 +59,25 @@ class _MyAppState extends State<MyApp> {
             return FutureBuilder<String>(
               future: _branchLinkFuture,
               builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  // Muestra el CircularProgressIndicator si aún está cargando
+                if (_hasError || snapshot.hasError) {
+                  return NotFoundScreen();
+                } else if (snapshot.connectionState ==
+                    ConnectionState.waiting) {
                   return Scaffold(
                       body: Center(child: CircularProgressIndicator()));
-                } else if (snapshot.hasError) {
-                  // Muestra ScreenNotFound si hay un error
-                  return ScreenNotFound();
                 } else {
-                  // Ejecuta una acción después de construir el widget
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    if (snapshot.hasData) {
-                      Provider.of<BranchCatalogProvider>(context, listen: false)
+                  WidgetsBinding.instance.addPostFrameCallback((_) async {
+                    try {
+                      await Provider.of<BranchCatalogProvider>(context,
+                              listen: false)
                           .fetchBranchCatalog(snapshot.data!);
+                    } catch (e) {
+                      if (!mounted) return;
+                      setState(() {
+                        _hasError = true;
+                      });
                     }
                   });
-                  // Muestra WelcomeScreen en caso de éxito
                   return WelcomeScreen();
                 }
               },
