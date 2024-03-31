@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:menu/bloc/scroll_tabbar_bloc.dart';
 import 'dart:js' as js;
 import 'package:menu/providers/branch_catalog_provider.dart';
 import 'package:menu/screens/welcome_screen.dart';
@@ -35,6 +36,7 @@ class _MyAppState extends State<MyApp> {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => BranchCatalogProvider()),
+        ChangeNotifierProvider(create: (_) => ScrollTabBarBLoC()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
