@@ -31,9 +31,9 @@ class WelcomeScreen extends StatelessWidget {
   Widget _buildContent(
       BuildContext context, BranchCatalogProvider branchCatalogProvider) {
     final brandName =
-        branchCatalogProvider.branchCatalog?.brandName ?? 'Empresa';
+        branchCatalogProvider.branchCatalog?.brandName ?? 'Tu Empresa';
     final branchName =
-        branchCatalogProvider.branchCatalog?.branchName ?? 'Sucursal';
+        branchCatalogProvider.branchCatalog?.branchName ?? 'Tu Sucursal';
     final Uri _url_insta = Uri.parse(
         branchCatalogProvider.branchCatalog?.instagramLink ??
             'https://www.instagram.com/');

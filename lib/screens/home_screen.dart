@@ -108,31 +108,38 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         ),
                         child: Column(
                           children: [
-                            Column(
-                              children: [
-                                Center(
-                                  // Centro el texto de la marca
-                                  child: Text(
-                                    brandName,
-                                    textAlign: TextAlign.center,
-                                    style: GoogleFonts.lato(
-                                      fontSize: 28,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    ),
+                            Container(
+                              height: 30,
+                              child: FittedBox(
+                                fit: BoxFit
+                                    .scaleDown, // Ajusta el tamaño del texto para que encaje en el contenedor
+                                child: RichText(
+                                  textAlign:
+                                      TextAlign.center, // Centra el texto
+                                  text: TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: brandName +
+                                            " - ", // Nombre de la marca
+                                        style: GoogleFonts.pacifico(
+                                          fontSize:
+                                              20, // Este tamaño también se ajustará
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text:
+                                            branchName, // Nombre de la sucursal
+                                        style: GoogleFonts.pacifico(
+                                          fontSize:
+                                              20, // Este tamaño también se ajustará
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                Center(
-                                  // Centro el texto de la marca
-                                  child: Text(
-                                    branchName, // Usa la variable brandName aquí
-                                    textAlign: TextAlign
-                                        .center, // Alineo el texto al centro
-                                    style: GoogleFonts.pacifico(
-                                        fontSize: 24, color: Colors.white),
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
                             TabBar(
                               isScrollable: true,
@@ -223,8 +230,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                     ),
                                     Container(
                                       color: Colors.black,
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 10),
+                                      height: 25,
+                                      padding: EdgeInsets.only(top: 2),
                                       child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
@@ -239,7 +246,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                               style: TextStyle(
                                                 color: Colors.white
                                                     .withOpacity(0.8),
-                                                fontSize: 16,
+                                                fontSize: 12,
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
@@ -252,8 +259,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                             },
                                             child: Image.asset(
                                               'images/tools/4uRestFont-white.png',
-                                              height:
-                                                  35, // Ajusta esto según sea necesario para que coincida con el diseño deseado
+                                              height: 30,
                                             ),
                                           ),
                                         ],
@@ -304,7 +310,7 @@ class _TabWidget extends StatelessWidget {
       child: Card(
         elevation: selected ? 6 : 0,
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           child: Text(
             categoryTab.category.name,
             style: TextStyle(

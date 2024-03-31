@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:menu/bloc/scroll_tabbar_bloc.dart';
 import 'dart:js' as js;
 import 'package:menu/providers/branch_catalog_provider.dart';
+import 'package:menu/screens/screen_not_found.dart';
 import 'package:menu/screens/welcome_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -28,7 +29,13 @@ class _MyAppState extends State<MyApp> {
     String currentUrl = js.context['location']['href'];
     List<String> urlParts = currentUrl.split('/');
     String branchLink = urlParts.last;
-    return branchLink;
+
+    // Verifica que el branchLink esté en minúsculas y contenga al menos un guion medio
+    if (branchLink == branchLink.toLowerCase() && branchLink.contains('-')) {
+      return branchLink; // Texto válido
+    } else {
+      return ""; // Indica inválido
+    }
   }
 
   @override
@@ -51,19 +58,11 @@ class _MyAppState extends State<MyApp> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Scaffold(
                       body: Center(child: CircularProgressIndicator()));
-                } else if (snapshot.hasError) {
-                  print('Error al inicializar la app: ${snapshot.error}');
-                  return Scaffold(
-                      body: Center(
-                          child: Text(
-                              "Error al inicializar la app: ${snapshot.error}")));
+                } else if (snapshot.hasError || snapshot.data == "") {
+                  // Error o link inválido, muestra pantalla de no encontrado
+                  return Scaffold(body: Center(child: ScreenNotFound()));
                 } else {
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    if (snapshot.hasData) {
-                      Provider.of<BranchCatalogProvider>(context, listen: false)
-                          .fetchBranchCatalog(snapshot.data!);
-                    }
-                  });
+                  // Se ha obtenido un enlace válido
                   return WelcomeScreen();
                 }
               },
@@ -74,3 +73,14 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
+
+
+
+/*
+  Future<String> _getBranchLink() async {
+    await Future.delayed(Duration.zero);
+    String currentUrl = js.context['location']['href'];
+    List<String> urlParts = currentUrl.split('/');
+    String branchLink = urlParts.last;
+    return branchLink;
+  }*/
