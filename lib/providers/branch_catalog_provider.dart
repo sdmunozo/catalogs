@@ -10,18 +10,20 @@ class BranchCatalogProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
 
   Future<void> fetchBranchCatalog(String branchPath) async {
-    _isLoading = true;
-    notifyListeners();
-
-    try {
-      final response =
-          await Api4uRest.httpGet('/digital-menu/get-digital-menu/$branchPath');
-      _branchCatalog = BranchCatalogResponse.fromJson(response);
-    } catch (e) {
-      print('Error al obtener el catálogo de la sucursal: $e');
-    } finally {
-      _isLoading = false;
+    if (branchPath.isNotEmpty && branchPath.isNotEmpty) {
+      _isLoading = true;
       notifyListeners();
+
+      try {
+        final response = await Api4uRest.httpGet(
+            '/digital-menu/get-digital-menu/$branchPath');
+        _branchCatalog = BranchCatalogResponse.fromJson(response);
+      } catch (e) {
+        print('Error al obtener el catálogo de la sucursal: $e');
+      } finally {
+        _isLoading = false;
+        notifyListeners();
+      }
     }
   }
 }

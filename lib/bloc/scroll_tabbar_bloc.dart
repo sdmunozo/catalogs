@@ -63,7 +63,7 @@ class ScrollTabBarBLoC with ChangeNotifier {
   }
 
   void _onScrollListener() {
-    if (_listen) {
+    if (_listen && scrollController.hasClients) {
       for (int i = 0; i < tabs.length; i++) {
         final tab = tabs[i];
         if (scrollController.offset >= tab.offsetFrom &&
@@ -83,6 +83,12 @@ class ScrollTabBarBLoC with ChangeNotifier {
     scrollController.addListener(_onScrollListener);
 
     initCategoryTabController(ticker, context, catalogId: id);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (scrollController.hasClients) {
+        scrollController.jumpTo(0);
+      }
+    });
+    scrollController.addListener(_onScrollListener);
   }
 
   void onCategorySelected(int index, {bool animationRequired = true}) async {
