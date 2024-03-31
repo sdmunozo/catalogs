@@ -185,7 +185,7 @@ class MenuItemCard extends StatelessWidget {
     }
 
     String modifiersString = buildModifiersString();
-    print(modifiersString);
+    //print(modifiersString);
 
     return Card(
       color: Colors.white.withOpacity(0.85),
