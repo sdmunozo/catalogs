@@ -11,9 +11,9 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:async';
 
-const _backgroundColor = Color(0xFFF6F9FA);
 const _blueColor = Color(0xFF0D1863);
-const _greenColor = Color(0xFF2BBEBA);
+
+const secFeedbackTimer = 30;
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -42,7 +42,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   void _startFeedbackTimer() {
     if (!_isFeedbackSubmitted) {
-      _timer = Timer(Duration(seconds: 30), () {
+      _timer = Timer(Duration(seconds: secFeedbackTimer), () {
         _showFeedbackModal();
       });
     }
@@ -52,6 +52,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   String _userComment = '';
 
   void _showFeedbackModal() {
+    String? _errorFeedback;
+
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -91,6 +93,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                   onTap: () {
                                     setState(() {
                                       _selectedFeedback = type;
+                                      _errorFeedback = null;
                                     });
                                   },
                                   child: Container(
@@ -123,13 +126,28 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       _userComment = value;
                     },
                   ),
+                  if (_errorFeedback != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Text(
+                        _errorFeedback!,
+                        style: TextStyle(color: Colors.red, fontSize: 14),
+                      ),
+                    ),
                 ],
               ),
               actions: [
                 TextButton(
                   onPressed: () {
-                    _submitFeedback('withComment');
-                    Navigator.of(context).pop();
+                    if (_selectedFeedback == null) {
+                      setState(() {
+                        _errorFeedback =
+                            'Por favor, selecciona un emoji antes de enviar.';
+                      });
+                    } else {
+                      _submitFeedback('withComment');
+                      Navigator.of(context).pop();
+                    }
                   },
                   child: Text('Enviar'),
                 ),
@@ -142,34 +160,52 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   void _submitFeedback(String feedbackType) {
-    if (feedbackType == 'withComment') {
-      final branchCatalogProvider =
-          Provider.of<BranchCatalogProvider>(context, listen: false);
-      final feedbackProvider =
-          Provider.of<FeedbackProvider>(context, listen: false);
-
-      int score = _selectedFeedback == 'sad'
-          ? 1
-          : (_selectedFeedback == 'normal' ? 2 : 3);
-
-      feedbackProvider
-          .submitFeedback(
-              branchCatalogProvider.sessionId,
-              branchCatalogProvider.branchCatalog?.branchId ?? '',
-              score,
-              _userComment)
-          .then((_) {
-        // Aquí manejas la respuesta exitosa, por ejemplo, cerrar el modal y notificar al usuario
-      }).catchError((error) {
-        // Aquí manejas el error, por ejemplo, mostrar un mensaje al usuario
-      });
-
-      // Actualiza el estado para reflejar que la retroalimentación fue enviada
-      setState(() {
-        _isFeedbackSubmitted = true;
-        // Considera resetear _selectedFeedback y _userComment aquí
-      });
+    if (_selectedFeedback == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Por favor, selecciona un emoji antes de enviar.'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return;
     }
+    final branchCatalogProvider =
+        Provider.of<BranchCatalogProvider>(context, listen: false);
+    final feedbackProvider =
+        Provider.of<FeedbackProvider>(context, listen: false);
+
+    int score = _selectedFeedback == 'sad'
+        ? 1
+        : (_selectedFeedback == 'normal' ? 2 : 3);
+
+    feedbackProvider
+        .submitFeedback(
+            branchCatalogProvider.sessionId,
+            branchCatalogProvider.branchCatalog?.branchId ?? '',
+            score,
+            _userComment)
+        .then((_) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('¡Gracias por ayudarnos a mejorar!'),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 3),
+        ),
+      );
+    }).catchError((error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Ocurrió un error al enviar tu feedback.'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    });
+
+    setState(() {
+      _isFeedbackSubmitted = true;
+      _selectedFeedback = null;
+      _userComment = '';
+    });
   }
 
   @override
@@ -298,7 +334,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                         CrossAxisAlignment.stretch,
                                     children: [
                                       Container(
-                                        //color: _backgroundColor,
                                         height: 45,
                                         child: Consumer<ScrollTabBarBLoC>(
                                           builder: (context, bloc, child) {
@@ -337,7 +372,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                       ),
                                       Expanded(
                                         child: Container(
-                                          //color: _backgroundColor,
                                           child: Consumer<ScrollTabBarBLoC>(
                                             builder: (context, bloc, child) {
                                               return ListView.builder(
@@ -522,24 +556,3 @@ class _ProductItem extends StatelessWidget {
             }));
   }
 }
-/*
-  void _submitFeedback(String feedbackType) {
-    // Solo actúa si el feedbackType es 'withComment', lo que indica que el botón "Enviar" fue presionado
-    if (feedbackType == 'withComment') {
-      final branchCatalogProvider =
-          Provider.of<BranchCatalogProvider>(context, listen: false);
-      // Imprime el ícono seleccionado y el comentario
-      print('ID de sesión: ${branchCatalogProvider.sessionId}');
-      print(
-          "Ícono seleccionado: $_selectedFeedback, Comentario: $_userComment");
-
-      // Aquí puedes llamar a tu endpoint para enviar la retroalimentación junto con el comentario
-    }
-
-    // Independientemente de cómo se llamó a _submitFeedback, actualiza el estado para reflejar que la retroalimentación fue enviada
-    setState(() {
-      _isFeedbackSubmitted = true;
-      // Considera resetear _selectedFeedback y _userComment aquí si planeas permitir que el modal se muestre nuevamente
-    });
-  }
-*/
