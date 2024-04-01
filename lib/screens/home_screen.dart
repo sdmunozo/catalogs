@@ -8,6 +8,7 @@ import 'package:menu/screens/single_item_screen.dart';
 import 'package:menu/screens/welcome_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'dart:async';
 
 const _backgroundColor = Color(0xFFF6F9FA);
 const _blueColor = Color(0xFF0D1863);
@@ -20,6 +21,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   final _bloc = ScrollTabBarBLoC();
+  Timer? _timer;
+  bool _isFeedbackSubmitted = false;
 
   void _launchUrl(Uri url) async {
     try {
@@ -33,6 +36,131 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    _startFeedbackTimer();
+  }
+
+  void _startFeedbackTimer() {
+    if (!_isFeedbackSubmitted) {
+      _timer = Timer(Duration(seconds: 20), () {
+        _showFeedbackModal();
+      });
+    }
+  }
+
+  String? _selectedFeedback;
+  String _userComment = '';
+
+  void _showFeedbackModal() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text(
+                '¿Cómo fue tu experiencia con el Menú Digital?',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w300),
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ...['sad', 'normal', 'happy']
+                          .map((type) {
+                            String assetName;
+                            switch (type) {
+                              case 'sad':
+                                assetName = 'assets/feedback/triste.png';
+                                break;
+                              case 'normal':
+                                assetName = 'assets/feedback/confuso.png';
+                                break;
+                              case 'happy':
+                              default:
+                                assetName = 'assets/feedback/feliz.png';
+                                break;
+                            }
+                            return Row(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedFeedback = type;
+                                    });
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.all(4),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: _selectedFeedback == type
+                                          ? Colors.blue
+                                          : Colors.transparent,
+                                    ),
+                                    child: Opacity(
+                                      opacity:
+                                          _selectedFeedback == type ? 1.0 : 0.5,
+                                      child: Image.asset(assetName, width: 40),
+                                    ),
+                                  ),
+                                ),
+                                if (type != 'happy') SizedBox(width: 20),
+                              ],
+                            );
+                          })
+                          .expand((widget) => [widget])
+                          .toList(),
+                    ],
+                  ),
+                  TextField(
+                    decoration:
+                        InputDecoration(hintText: 'Deja un comentario...'),
+                    onChanged: (value) {
+                      _userComment = value;
+                    },
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Cerrar'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    _submitFeedback('withComment');
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Enviar'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _submitFeedback(String feedbackType) {
+    // Solo actúa si el feedbackType es 'withComment', lo que indica que el botón "Enviar" fue presionado
+    if (feedbackType == 'withComment') {
+      // Imprime el ícono seleccionado y el comentario
+      print(
+          "Ícono seleccionado: $_selectedFeedback, Comentario: $_userComment");
+
+      // Aquí puedes llamar a tu endpoint para enviar la retroalimentación junto con el comentario
+    }
+
+    // Independientemente de cómo se llamó a _submitFeedback, actualiza el estado para reflejar que la retroalimentación fue enviada
+    setState(() {
+      _isFeedbackSubmitted = true;
+      // Considera resetear _selectedFeedback y _userComment aquí si planeas permitir que el modal se muestre nuevamente
+    });
   }
 
   @override
@@ -62,6 +190,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   @override
   void dispose() {
+    _timer?.cancel();
     _bloc.dispose();
     _catalogTabController?.dispose();
     _bloc.categoryTabController?.dispose();
