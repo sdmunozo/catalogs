@@ -41,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   void _startFeedbackTimer() {
     if (!_isFeedbackSubmitted) {
-      _timer = Timer(Duration(seconds: 20), () {
+      _timer = Timer(Duration(seconds: 30), () {
         _showFeedbackModal();
       });
     }
@@ -59,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           builder: (context, setState) {
             return AlertDialog(
               title: Text(
-                '¿Cómo fue tu experiencia con el Menú Digital?',
+                '¿Qué tál tu experiencia con el Menú Digital?',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w300),
               ),
@@ -125,12 +125,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 ],
               ),
               actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('Cerrar'),
-                ),
                 TextButton(
                   onPressed: () {
                     _submitFeedback('withComment');
