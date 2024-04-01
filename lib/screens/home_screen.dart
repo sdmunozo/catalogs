@@ -9,6 +9,7 @@ import 'package:menu/screens/shared/items_widget.dart';
 import 'package:menu/screens/single_item_screen.dart';
 import 'package:menu/screens/welcome_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:async';
 
@@ -41,7 +42,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     _startFeedbackTimer();
   }
 
-  void _startFeedbackTimer() {
+  void _startFeedbackTimer() async {
+    final prefs = await SharedPreferences.getInstance();
+    // Revisa si el feedback ya fue enviado antes
+    _isFeedbackSubmitted = prefs.getBool('feedbackSubmitted') ?? false;
+
     if (!_isFeedbackSubmitted) {
       _timer = Timer(Duration(seconds: secFeedbackTimer), () {
         _showFeedbackModal();
@@ -160,7 +165,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
-  void _submitFeedback(String feedbackType) {
+  void _submitFeedback(String feedbackType) async {
     if (_selectedFeedback == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -200,6 +205,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         ),
       );
     });
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('feedbackSubmitted', true);
 
     setState(() {
       _isFeedbackSubmitted = true;
