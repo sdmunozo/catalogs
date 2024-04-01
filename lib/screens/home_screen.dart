@@ -42,7 +42,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   void _startFeedbackTimer() {
     if (!_isFeedbackSubmitted) {
-      _timer = Timer(Duration(seconds: 25), () {
+      _timer = Timer(Duration(seconds: 30), () {
         _showFeedbackModal();
       });
     }
