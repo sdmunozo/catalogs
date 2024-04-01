@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:menu/api/api_4urest.dart';
+import 'package:menu/api/api_4uRest.dart';
 
 class FeedbackProvider with ChangeNotifier {
   Future<void> submitFeedback(
@@ -15,7 +15,7 @@ class FeedbackProvider with ChangeNotifier {
       //print('Enviando feedback con datos: $data');
       await Api4uRest.httpPost('/digital-menu/submit-feedback', data);
     } catch (e) {
-      //print('Error al enviar el feedback: $e');
+      //print('Error al enviar el feedback: $e ');
     }
   }
 }
