@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:menu/providers/branch_catalog_provider.dart';
+import 'package:menu/providers/device_info_provider.dart';
 import 'package:menu/screens/home_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -14,6 +15,10 @@ class WelcomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final deviceInfoProvider =
+        Provider.of<DeviceInfoProvider>(context, listen: false);
+    deviceInfoProvider.trackDevice(deviceInfoProvider.deviceInfo);
+
     return Consumer<BranchCatalogProvider>(
       builder: (context, branchCatalogProvider, child) {
         if (branchCatalogProvider.branchCatalog == null) {

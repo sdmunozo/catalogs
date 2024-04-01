@@ -34,7 +34,7 @@ class BranchCatalogProvider extends ChangeNotifier {
             '/digital-menu/get-digital-menu/$branchPath');
         _branchCatalog = BranchCatalogResponse.fromJson(response);
       } catch (e) {
-        print('Error al obtener el catálogo de la sucursal: $e');
+        //print('Error al obtener el catálogo de la sucursal: $e');
         throw Exception('Error al obtener el catálogo de la sucursal');
       } finally {
         _isLoading = false;

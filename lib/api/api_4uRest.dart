@@ -44,9 +44,10 @@ class Api4uRest {
       }
     } catch (e) {
       if (e is DioException) {
-        //print('DioError en el POST: ${e.response?.data}, Estado: ${e.response?.statusCode}');
+        print(
+            'DioError en el POST: ${e.response?.data}, Estado: ${e.response?.statusCode}');
       } else {
-        //print('Error en el POST: $e');
+        print('Error en el POST: $e');
       }
     }
   }

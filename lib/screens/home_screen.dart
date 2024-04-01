@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:menu/bloc/scroll_tabbar_bloc.dart';
 import 'package:menu/models/branch_catalog_response.dart';
+import 'package:menu/models/feedback_info.dart';
 import 'package:menu/providers/branch_catalog_provider.dart';
 import 'package:menu/providers/feedback_provider.dart';
 import 'package:menu/screens/shared/items_widget.dart';
@@ -177,14 +178,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     int score = _selectedFeedback == 'sad'
         ? 1
         : (_selectedFeedback == 'normal' ? 2 : 3);
-
-    feedbackProvider
-        .submitFeedback(
-            branchCatalogProvider.sessionId,
-            branchCatalogProvider.branchCatalog?.branchId ?? '',
-            score,
-            _userComment)
-        .then((_) {
+    FeedbackInfo feedbackInfo = FeedbackInfo(
+      sessionId: branchCatalogProvider.sessionId,
+      branchId: branchCatalogProvider.branchCatalog?.branchId ?? '',
+      score: score,
+      comment: _userComment ?? "",
+    );
+    feedbackProvider.submitFeedback(feedbackInfo).then((_) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('¡Gracias por ayudarnos a mejorar!'),
