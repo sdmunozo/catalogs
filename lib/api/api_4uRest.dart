@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:dio/dio.dart';
 
 class Api4uRest {
@@ -26,6 +27,27 @@ class Api4uRest {
       }
     } catch (e) {
       throw Exception('Error en el GET: $e');
+    }
+  }
+
+  static Future<dynamic> httpPost(
+      String path, Map<String, dynamic> data) async {
+    try {
+      final response = await _dio.post(path, data: data);
+      if (response.statusCode == 200) {
+        return response.data is String
+            ? jsonEncode(response.data)
+            : response.data;
+      } else {
+        throw Exception(
+            'Respuesta no exitosa: ${response.statusCode}, ${response.data}');
+      }
+    } catch (e) {
+      if (e is DioException) {
+        //print('DioError en el POST: ${e.response?.data}, Estado: ${e.response?.statusCode}');
+      } else {
+        //print('Error en el POST: $e');
+      }
     }
   }
 }

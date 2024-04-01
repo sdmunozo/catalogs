@@ -3,6 +3,7 @@ import 'package:menu/bloc/scroll_tabbar_bloc.dart';
 import 'dart:js' as js;
 import 'dart:async';
 import 'package:menu/providers/branch_catalog_provider.dart';
+import 'package:menu/providers/feedback_provider.dart';
 import 'package:menu/screens/not_found_screen.dart';
 import 'package:menu/screens/welcome_screen.dart';
 import 'package:provider/provider.dart';
@@ -48,6 +49,7 @@ class _MyAppState extends State<MyApp> {
       providers: [
         ChangeNotifierProvider(create: (_) => BranchCatalogProvider()),
         ChangeNotifierProvider(create: (_) => ScrollTabBarBLoC()),
+        ChangeNotifierProvider(create: (_) => FeedbackProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

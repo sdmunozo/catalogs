@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:menu/bloc/scroll_tabbar_bloc.dart';
 import 'package:menu/models/branch_catalog_response.dart';
 import 'package:menu/providers/branch_catalog_provider.dart';
+import 'package:menu/providers/feedback_provider.dart';
 import 'package:menu/screens/shared/items_widget.dart';
 import 'package:menu/screens/single_item_screen.dart';
 import 'package:menu/screens/welcome_screen.dart';
@@ -141,20 +142,34 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   void _submitFeedback(String feedbackType) {
-    // Solo actúa si el feedbackType es 'withComment', lo que indica que el botón "Enviar" fue presionado
     if (feedbackType == 'withComment') {
-      // Imprime el ícono seleccionado y el comentario
-      print(
-          "Ícono seleccionado: $_selectedFeedback, Comentario: $_userComment");
+      final branchCatalogProvider =
+          Provider.of<BranchCatalogProvider>(context, listen: false);
+      final feedbackProvider =
+          Provider.of<FeedbackProvider>(context, listen: false);
 
-      // Aquí puedes llamar a tu endpoint para enviar la retroalimentación junto con el comentario
+      int score = _selectedFeedback == 'sad'
+          ? 1
+          : (_selectedFeedback == 'normal' ? 2 : 3);
+
+      feedbackProvider
+          .submitFeedback(
+              branchCatalogProvider.sessionId,
+              branchCatalogProvider.branchCatalog?.branchId ?? '',
+              score,
+              _userComment)
+          .then((_) {
+        // Aquí manejas la respuesta exitosa, por ejemplo, cerrar el modal y notificar al usuario
+      }).catchError((error) {
+        // Aquí manejas el error, por ejemplo, mostrar un mensaje al usuario
+      });
+
+      // Actualiza el estado para reflejar que la retroalimentación fue enviada
+      setState(() {
+        _isFeedbackSubmitted = true;
+        // Considera resetear _selectedFeedback y _userComment aquí
+      });
     }
-
-    // Independientemente de cómo se llamó a _submitFeedback, actualiza el estado para reflejar que la retroalimentación fue enviada
-    setState(() {
-      _isFeedbackSubmitted = true;
-      // Considera resetear _selectedFeedback y _userComment aquí si planeas permitir que el modal se muestre nuevamente
-    });
   }
 
   @override
@@ -507,3 +522,24 @@ class _ProductItem extends StatelessWidget {
             }));
   }
 }
+/*
+  void _submitFeedback(String feedbackType) {
+    // Solo actúa si el feedbackType es 'withComment', lo que indica que el botón "Enviar" fue presionado
+    if (feedbackType == 'withComment') {
+      final branchCatalogProvider =
+          Provider.of<BranchCatalogProvider>(context, listen: false);
+      // Imprime el ícono seleccionado y el comentario
+      print('ID de sesión: ${branchCatalogProvider.sessionId}');
+      print(
+          "Ícono seleccionado: $_selectedFeedback, Comentario: $_userComment");
+
+      // Aquí puedes llamar a tu endpoint para enviar la retroalimentación junto con el comentario
+    }
+
+    // Independientemente de cómo se llamó a _submitFeedback, actualiza el estado para reflejar que la retroalimentación fue enviada
+    setState(() {
+      _isFeedbackSubmitted = true;
+      // Considera resetear _selectedFeedback y _userComment aquí si planeas permitir que el modal se muestre nuevamente
+    });
+  }
+*/
