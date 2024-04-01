@@ -32,7 +32,7 @@ class SingleItemScreen extends StatelessWidget {
                   return Padding(
                     padding: const EdgeInsets.all(30.0),
                     child: Image.asset(
-                      "images/tools/4uRestIcon-black.png",
+                      "assets/images/tools/4uRestIcon-black.png",
                       fit: BoxFit.contain,
                     ),
                   );
@@ -48,7 +48,7 @@ class SingleItemScreen extends StatelessWidget {
         return imageWidget(item.icon!);
       } else {
         // Usa una imagen predeterminada si item.icon es null
-        return imageWidget("images/tools/cooking.png");
+        return imageWidget("assets/images/tools/cooking.png");
       }
     }
 
@@ -258,7 +258,7 @@ class SingleItemScreen extends StatelessWidget {
                           _launchUrl(Uri.parse('https://www.4urest.mx'));
                         },
                         child: Image.asset(
-                          'images/tools/4uRestFont-white.png',
+                          'assets/images/tools/4uRestFont-white.png',
                           height:
                               35, // Ajusta esto según sea necesario para que coincida con el diseño deseado
                         ),
@@ -282,48 +282,3 @@ class SingleItemScreen extends StatelessWidget {
     );
   }
 }
-
-
-    /*
-
-    Widget buildItemImage() {
-      // Widget para la imagen con margen y bordes redondeados
-      Widget imageWidget(String imageUrl) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(
-              horizontal: 30,
-              vertical: 10), // Ajusta el padding según necesites
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(
-                50.0), // Ajusta el radio del borde según necesites
-            child: Image.network(
-              imageUrl,
-              width: double.infinity,
-              height: double.infinity,
-              fit: BoxFit.contain,
-              errorBuilder: (context, error, stackTrace) {
-                // Retorna una imagen predeterminada en caso de error
-                return Container(
-                  child: Padding(
-                    padding: const EdgeInsets.all(30.0),
-                    child: Image.asset(
-                      "images/tools/4uRestIcon-black.png",
-                      width: double.infinity,
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        );
-      }
-
-      // Decide cuál widget de imagen usar basado en si item.icon es null o no
-      if (item.icon != null) {
-        return imageWidget(item.icon!);
-      } else {
-        // Usa una imagen predeterminada si item.icon es null
-        return imageWidget("images/tools/cooking.png");
-      }
-    }*/

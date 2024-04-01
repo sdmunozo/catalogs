@@ -224,7 +224,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                   ? NetworkImage(backgroundImage)
                                       as ImageProvider<Object>
                                   : AssetImage(
-                                          'images/tools/FruteriaLaUnica_bg.jpg')
+                                          'assets/images/tools/FruteriaLaUnica_bg.jpg')
                                       as ImageProvider<Object>,
                               fit: BoxFit.cover,
                               opacity: 1,
@@ -382,7 +382,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                                         'https://www.4urest.mx'));
                                                   },
                                                   child: Image.asset(
-                                                    'images/tools/4uRestFont-white.png',
+                                                    'assets/images/tools/4uRestFont-white.png',
                                                     height: 30,
                                                   ),
                                                 ),

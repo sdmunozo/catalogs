@@ -25,7 +25,7 @@ class NotFoundScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset('images/tools/4uRest-DM-3.png', width: 200),
+                Image.asset('assets/images/tools/4uRest-DM-3.png', width: 200),
                 SizedBox(height: 40),
                 Text(
                   'Página no encontrada',
@@ -44,12 +44,13 @@ class NotFoundScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     _buildCircularButton(
-                        "images/tools/whatsapp1.png", _urlWhatsApp),
+                        "assets/images/tools/whatsapp1.png", _urlWhatsApp),
                     SizedBox(width: 20),
                     _buildCircularButton(
-                        "images/tools/insta.png", _urlInstagram),
+                        "assets/images/tools/insta.png", _urlInstagram),
                     SizedBox(width: 20),
-                    _buildCircularButton("images/tools/link.png", _urlWeb),
+                    _buildCircularButton(
+                        "assets/images/tools/link.png", _urlWeb),
                   ],
                 ),
                 SizedBox(height: 40),
