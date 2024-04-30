@@ -100,16 +100,14 @@ class WelcomeScreen extends StatelessWidget {
                         child: Text(
                           brandName,
                           textAlign: TextAlign.center,
-                          style: GoogleFonts.montserratAlternates(
-                              fontSize: 35, color: Colors.white),
+                          style: TextStyle(fontSize: 35, color: Colors.white),
                         ),
                       ),
                       Center(
                         child: Text(
                           branchName,
                           textAlign: TextAlign.center,
-                          style: GoogleFonts.montserratAlternates(
-                              fontSize: 30, color: Colors.white),
+                          style: TextStyle(fontSize: 30, color: Colors.white),
                         ),
                       ),
                     ],
