@@ -7,7 +7,10 @@ class MenuItemCard extends StatelessWidget {
   final Item item;
   final VoidCallback onTap;
   final int maxWidgetsToShow = 5;
-  final int maxLimit = 50;
+  //final int maxLimit = 50;
+  //final int minLimit = 25;
+
+  final int maxLimit = 200;
   final int minLimit = 25;
   final TextStyle priceStyle = TextStyle(
     color: Colors.green,
@@ -24,6 +27,9 @@ class MenuItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double maxWidth =
+        MediaQuery.of(context).size.width - 40; // Asumiendo algunos márgenes
+
     final bool shouldShowPrice =
         item.price.isNotEmpty && item.price != '0' && item.price != '0.00';
 
@@ -44,7 +50,7 @@ class MenuItemCard extends StatelessWidget {
         int dashPosition = adjustedText.indexOf(' - ');
         return Tuple2(
             RichText(
-              maxLines: 2,
+              maxLines: 3,
               overflow: TextOverflow.ellipsis,
               text: TextSpan(
                 children: [
@@ -63,7 +69,7 @@ class MenuItemCard extends StatelessWidget {
         return Tuple2(
             Text(adjustedText,
                 style: TextStyle(color: Colors.black),
-                maxLines: 2,
+                maxLines: 3,
                 overflow: TextOverflow.ellipsis),
             usesTwoLines);
       }
@@ -161,6 +167,32 @@ class MenuItemCard extends StatelessWidget {
       }
     }
 
+    String formatTextWithHyphens(String text, int maxLineLength) {
+      RegExp wordPattern = RegExp(r'\w+');
+      List<String> words =
+          wordPattern.allMatches(text).map((m) => m.group(0)!).toList();
+      StringBuffer formattedText = StringBuffer();
+      String currentLine = '';
+
+      for (var word in words) {
+        if (currentLine.length + word.length + 1 > maxLineLength) {
+          if (currentLine.length + word.length == maxLineLength) {
+            // La palabra cabe exactamente al final de la línea sin necesidad de guion.
+            formattedText.write(currentLine + word);
+          } else {
+            // No cabe, se necesita un guion.
+            formattedText.write(currentLine + '-\n');
+            word = word + ' ';
+          }
+          currentLine = word;
+        } else {
+          currentLine += word + ' ';
+        }
+      }
+      formattedText.write(currentLine.trimRight()); // Agrega lo que queda.
+      return formattedText.toString();
+    }
+
     String buildModifiersString() {
       List<String> modifiersList = [];
 
@@ -204,13 +236,13 @@ class MenuItemCard extends StatelessWidget {
                   children: contentWidgets,
                 ),
               ),
-              if (item.icon != null && item.icon!.isNotEmpty)
+              if (item.icon != null && item.icon.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.only(left: 16),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(8),
                     child: Image.network(
-                      item.icon!,
+                      item.icon,
                       width: 100,
                       height: 100,
                       fit: BoxFit.cover,

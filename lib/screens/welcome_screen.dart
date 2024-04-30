@@ -24,7 +24,28 @@ class WelcomeScreen extends StatelessWidget {
         if (branchCatalogProvider.branchCatalog == null) {
           return Scaffold(
             body: Center(
-              child: CircularProgressIndicator(),
+              child: Positioned.fill(
+                child: Container(
+                  color: Colors.white,
+                  child: Center(
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        const SizedBox(
+                          width: 300,
+                          height: 300,
+                          child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                                Color(0xff24ace4)),
+                          ),
+                        ),
+                        Image.asset('assets/images/tools/4uRest-DM-3.png',
+                            width: 200, height: 200),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
             ),
           );
         }
@@ -79,7 +100,7 @@ class WelcomeScreen extends StatelessWidget {
                         child: Text(
                           brandName,
                           textAlign: TextAlign.center,
-                          style: GoogleFonts.pacifico(
+                          style: GoogleFonts.montserratAlternates(
                               fontSize: 35, color: Colors.white),
                         ),
                       ),
@@ -87,7 +108,7 @@ class WelcomeScreen extends StatelessWidget {
                         child: Text(
                           branchName,
                           textAlign: TextAlign.center,
-                          style: GoogleFonts.pacifico(
+                          style: GoogleFonts.montserratAlternates(
                               fontSize: 30, color: Colors.white),
                         ),
                       ),
@@ -148,7 +169,7 @@ class WelcomeScreen extends StatelessWidget {
                       SizedBox(height: 50),
                       GestureDetector(
                         onTap: () {
-                          _launchUrl(Uri.parse('https://www.4urest.mx'));
+                          _launchUrl(Uri.parse('https://landing.4urest.mx/'));
                         },
                         child: Text(
                           'Diseñado por',
@@ -162,7 +183,7 @@ class WelcomeScreen extends StatelessWidget {
                       SizedBox(height: 5),
                       GestureDetector(
                         onTap: () {
-                          _launchUrl(Uri.parse('https://www.4urest.mx'));
+                          _launchUrl(Uri.parse('https://landing.4urest.mx/'));
                         },
                         child: Image.asset(
                           'assets/images/tools/4uRestFont-white.png',

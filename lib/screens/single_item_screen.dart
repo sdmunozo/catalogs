@@ -1,7 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:menu/models/branch_catalog_response.dart'; // Asegúrate de tener esta clase definida o ajusta según tu modelo
+import 'package:menu/models/branch_catalog_response.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+final TextStyle myHeadlineTextStyle = TextStyle(
+  fontSize: 22,
+  fontWeight: FontWeight.bold,
+);
+
+final TextStyle myBodyTextStyle = TextStyle(
+  fontSize: 14,
+);
 
 class SingleItemScreen extends StatelessWidget {
   final Item item;
@@ -11,13 +20,10 @@ class SingleItemScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     void _launchUrl(Uri url) async {
-      if (!await launchUrl(url)) {
-        // Maneja el error o muestra un mensaje si es necesario
-      }
+      if (!await launchUrl(url)) {}
     }
 
     Widget buildItemImage() {
-      // Widget para la imagen con margen y bordes redondeados
       Widget imageWidget(String imageUrl) {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
@@ -43,13 +49,7 @@ class SingleItemScreen extends StatelessWidget {
         );
       }
 
-      // Decide cuál widget de imagen usar basado en si item.icon es null o no
-      if (item.icon != null) {
-        return imageWidget(item.icon!);
-      } else {
-        // Usa una imagen predeterminada si item.icon es null
-        return imageWidget("assets/images/tools/cooking.png");
-      }
+      return imageWidget(item.icon);
     }
 
     bool isAnyGroupSelectable =
@@ -70,7 +70,6 @@ class SingleItemScreen extends StatelessWidget {
             height: 932,
             child: Column(
               children: [
-                // Barra superior
                 Container(
                   color: Colors.black,
                   child: Padding(
@@ -82,7 +81,7 @@ class SingleItemScreen extends StatelessWidget {
                           child: Center(
                             child: Text(
                               item.alias,
-                              style: GoogleFonts.pacifico(
+                              style: GoogleFonts.montserratAlternates(
                                   color: Colors.white, fontSize: 25),
                             ),
                           ),
@@ -91,12 +90,10 @@ class SingleItemScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                // Contenedor expandible entre la barra superior e inferior
                 Expanded(
                   child: SingleChildScrollView(
-                    // Permite el desplazamiento
                     child: Container(
-                      color: Colors.grey[200], // Ejemplo de color de fondo
+                      color: Colors.grey[200],
                       child: Column(
                         children: [
                           buildItemImage(),
@@ -104,21 +101,12 @@ class SingleItemScreen extends StatelessWidget {
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
                               item.description,
-                              style: Theme.of(context)
-                                      .textTheme
-                                      .headline6
-                                      ?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 22,
-                                      ) ??
-                                  const TextStyle(
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 18,
+                              ),
                             ),
                           ),
                           isAnyGroupSelectable &&
-                                  item.price != null &&
                                   item.price.isNotEmpty &&
                                   item.price != '0'
                               ? Padding(
@@ -135,9 +123,7 @@ class SingleItemScreen extends StatelessWidget {
                               padding:
                                   const EdgeInsets.symmetric(vertical: 8.0),
                               child: Text(
-                                (item.price != null &&
-                                        item.price.isNotEmpty &&
-                                        item.price != '0')
+                                (item.price != '0')
                                     ? "\$${double.parse(item.price)?.toStringAsFixed(2)}"
                                     : 'Varias Opciones de \$',
                                 style: priceTextStyle,
@@ -151,13 +137,9 @@ class SingleItemScreen extends StatelessWidget {
                                   const EdgeInsets.symmetric(vertical: 8.0),
                               child: Text(
                                 "Personalizalo a tu gusto",
-                                style: Theme.of(context)
-                                        .textTheme
-                                        .bodyText2
-                                        ?.copyWith(
-                                          fontSize: 18,
-                                        ) ??
-                                    const TextStyle(fontSize: 14),
+                                style: TextStyle(
+                                  fontSize: 18,
+                                ),
                                 textAlign: TextAlign.center,
                               ),
                             ),
@@ -170,13 +152,9 @@ class SingleItemScreen extends StatelessWidget {
                                 return ListTile(
                                   title: Text(
                                     group.alias,
-                                    style: Theme.of(context)
-                                            .textTheme
-                                            .bodyText2
-                                            ?.copyWith(
-                                              fontSize: 18,
-                                            ) ??
-                                        const TextStyle(fontSize: 14),
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                    ),
                                   ),
                                   subtitle: ListView.builder(
                                     shrinkWrap: true,
@@ -195,23 +173,14 @@ class SingleItemScreen extends StatelessWidget {
                                           SizedBox(width: 8),
                                           Text(
                                             modifier.alias,
-                                            style: Theme.of(context)
-                                                    .textTheme
-                                                    .headline6
-                                                    ?.copyWith(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 18,
-                                                    ) ??
-                                                const TextStyle(
-                                                    fontSize: 18,
-                                                    fontWeight:
-                                                        FontWeight.bold),
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
                                           Spacer(),
                                           Text(
-                                            (modifier.price != null &&
-                                                    modifier.price.isNotEmpty &&
+                                            (modifier.price.isNotEmpty &&
                                                     modifier.price != '0')
                                                 ? "\$${double.parse(modifier.price)?.toStringAsFixed(2)}"
                                                 : '',
@@ -241,7 +210,7 @@ class SingleItemScreen extends StatelessWidget {
                     children: [
                       GestureDetector(
                         onTap: () =>
-                            _launchUrl(Uri.parse('https://www.4urest.mx')),
+                            _launchUrl(Uri.parse('https://landing.4urest.mx/')),
                         child: Text(
                           'Diseñado por ',
                           style: TextStyle(
@@ -255,7 +224,7 @@ class SingleItemScreen extends StatelessWidget {
                           width: 5), // Usa SizedBox para espacio horizontal
                       GestureDetector(
                         onTap: () {
-                          _launchUrl(Uri.parse('https://www.4urest.mx'));
+                          _launchUrl(Uri.parse('https://landing.4urest.mx/'));
                         },
                         child: Image.asset(
                           'assets/images/tools/4uRestFont-white.png',

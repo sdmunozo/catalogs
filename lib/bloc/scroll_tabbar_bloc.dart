@@ -6,7 +6,7 @@ import 'package:menu/providers/branch_catalog_provider.dart';
 import 'package:provider/provider.dart';
 
 const categoryHeight = 55.0;
-const productHeight = 132.0;
+const productHeight = 160.0;
 
 class ScrollTabBarBLoC with ChangeNotifier {
   List<CategoryTab> tabs = [];
@@ -15,6 +15,23 @@ class ScrollTabBarBLoC with ChangeNotifier {
   TabController? categoryTabController;
   ScrollController scrollController = ScrollController();
   bool _listen = true;
+  bool _scrollEnabled = true;
+
+  // Método _onScrollListener
+  void onScrollListener() {
+    if (_listen && scrollController.hasClients) {
+      for (int i = 0; i < tabs.length; i++) {
+        final tab = tabs[i];
+        if (scrollController.offset >= tab.offsetFrom &&
+            scrollController.offset <= tab.offsetTo &&
+            !tab.selected) {
+          onCategorySelected(i, animationRequired: false);
+          categoryTabController!.animateTo(i);
+          break;
+        }
+      }
+    }
+  }
 
   void initCategoryTabController(TickerProvider ticker, BuildContext context,
       {required String catalogId}) {
@@ -58,7 +75,8 @@ class ScrollTabBarBLoC with ChangeNotifier {
       print(
           'initCategoryTabController - No se encontró el catálogo o está vacío');
     }
-    scrollController.addListener(_onScrollListener);
+    //scrollController.addListener(_onScrollListener);
+    scrollController.addListener(onScrollListener);
     notifyListeners();
   }
 
@@ -77,6 +95,26 @@ class ScrollTabBarBLoC with ChangeNotifier {
     }
   }
 
+  void updateFilteredSections(List<Section> filteredSections) {
+    items.clear();
+    items.addAll(filteredSections);
+
+    final selectedCategoryName =
+        tabs.firstWhere((tab) => tab.selected).category.name;
+    final filteredCategory = filteredSections.firstWhere(
+        (section) =>
+            section.isCategory &&
+            section.category!.name == selectedCategoryName,
+        orElse: () => Section());
+
+    if (filteredCategory != null) {
+      final filteredCategoryIndex = items.indexOf(filteredCategory);
+      onCategorySelected(filteredCategoryIndex, animationRequired: false);
+    }
+
+    notifyListeners();
+  }
+
   void setCatalogId(String id, TickerProvider ticker, BuildContext context) {
     scrollController.dispose();
     scrollController = ScrollController();
@@ -90,6 +128,45 @@ class ScrollTabBarBLoC with ChangeNotifier {
     });
     scrollController.addListener(_onScrollListener);
   }
+
+  void onFilteredCategorySelected(int index) {
+    if (categoryTabController != null && index >= 0 && index < tabs.length) {
+      for (int i = 0; i < tabs.length; i++) {
+        final isSelected = i == index;
+        tabs[i] = tabs[i].copyWith(isSelected);
+      }
+      notifyListeners();
+      categoryTabController!.animateTo(
+        index,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    } else {
+      print(
+          "Índice de categoría fuera de rango o TabController no inicializado.");
+    }
+  }
+
+  void onCategorySelected(int index, {bool animationRequired = true}) async {
+    final selected = tabs[index];
+    for (int i = 0; i < tabs.length; i++) {
+      final condition = selected.category.name == tabs[i].category.name;
+      tabs[i] = tabs[i].copyWith(condition);
+    }
+    notifyListeners();
+
+    if (animationRequired && _scrollEnabled) {
+      _listen = false;
+      await scrollController.animateTo(
+        selected.offsetFrom,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.linear,
+      );
+      _listen = true;
+    }
+  }
+
+/*
 
   void onCategorySelected(int index, {bool animationRequired = true}) async {
     final selected = tabs[index];
@@ -107,6 +184,14 @@ class ScrollTabBarBLoC with ChangeNotifier {
         curve: Curves.linear,
       );
       _listen = true;
+    }
+  }*/
+
+  void setScrollEnabled(bool enabled) {
+    _scrollEnabled = enabled;
+    // Si el scroll está deshabilitado, podríamos necesitar detener cualquier desplazamiento actual
+    if (!enabled) {
+      scrollController.jumpTo(scrollController.offset);
     }
   }
 
