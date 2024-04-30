@@ -11,5 +11,13 @@
       "dest": "/build/web/index.html",
       "status": 200
     }
+  ],
+  
+   "rewrites": [
+     {
+       "source": "/(.*)",
+       "destination": "/index.html"
+     }
   ]
 }
+  
