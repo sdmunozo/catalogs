@@ -103,13 +103,13 @@ class _MyAppState extends State<MyApp> {
       );
 
       // Imprimir el objeto en formato JSON
-      print(deviceInfo.toJson());
+      //print(deviceInfo.toJson());
       if (mounted) {
         Provider.of<DeviceInfoProvider>(context, listen: false)
             .setDeviceInfo(deviceInfo);
       }
     } catch (e) {
-      print("Error obteniendo la información del dispositivo: $e");
+      //print("Error obteniendo la información del dispositivo: $e");
       // Considera cómo manejar este error en tu UI
     }
   }
@@ -150,7 +150,7 @@ class _MyAppState extends State<MyApp> {
                               listen: false);
                       _sessionId = branchCatalogProvider.sessionId;
                       _branchId = branchCatalogProvider.branchCatalog!.branchId;
-                      _printDeviceInfoAndParseUserAgent();
+                      //_printDeviceInfoAndParseUserAgent();
                     } catch (e) {
                       if (!mounted) return;
                       setState(() {
