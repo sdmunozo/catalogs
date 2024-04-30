@@ -13,18 +13,8 @@ class WelcomeScreen extends StatelessWidget {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final deviceInfoProvider =
-        Provider.of<DeviceInfoProvider>(context, listen: false);
-    deviceInfoProvider.trackDevice(deviceInfoProvider.deviceInfo);
-
-    return Consumer<BranchCatalogProvider>(
-      builder: (context, branchCatalogProvider, child) {
-        if (branchCatalogProvider.branchCatalog == null) {
-          return Scaffold(
-            body: Center(
-              child: Positioned.fill(
+/*
+Positioned.fill(
                 child: Container(
                   color: Colors.white,
                   child: Center(
@@ -46,7 +36,19 @@ class WelcomeScreen extends StatelessWidget {
                   ),
                 ),
               ),
-            ),
+ */
+
+  @override
+  Widget build(BuildContext context) {
+    final deviceInfoProvider =
+        Provider.of<DeviceInfoProvider>(context, listen: false);
+    deviceInfoProvider.trackDevice(deviceInfoProvider.deviceInfo);
+
+    return Consumer<BranchCatalogProvider>(
+      builder: (context, branchCatalogProvider, child) {
+        if (branchCatalogProvider.branchCatalog == null) {
+          return Scaffold(
+            body: Center(child: CircularProgressIndicator()),
           );
         }
         return _buildContent(context, branchCatalogProvider);
