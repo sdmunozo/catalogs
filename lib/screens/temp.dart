@@ -1,15 +1,13 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:menu/bloc/scroll_tabbar_bloc.dart';
 import 'package:menu/models/branch_catalog_response.dart';
 import 'package:menu/models/feedback_info.dart';
 import 'package:menu/providers/branch_catalog_provider.dart';
-import 'package:menu/providers/branch_catalog_response_extension.dart';
 import 'package:menu/providers/feedback_provider.dart';
 import 'package:menu/screens/shared/items_widget.dart';
 import 'package:menu/screens/single_item_screen.dart';
-import 'package:menu/screens/widgets/feedback_modal.dart';
+import 'package:menu/screens/welcome_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -28,8 +26,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   final _bloc = ScrollTabBarBLoC();
   Timer? _timer;
   bool _isFeedbackSubmitted = false;
-  List<Section> _filteredItems = [];
-  final FocusNode _searchFocusNode = FocusNode();
 
   void _launchUrl(Uri url) async {
     try {
@@ -44,21 +40,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _startFeedbackTimer();
-    _searchController.addListener(_onSearchChanged);
   }
 
   void _startFeedbackTimer() async {
     final prefs = await SharedPreferences.getInstance();
-    final lastFeedbackTime = prefs.getString('lastFeedbackTime');
-    final lastFeedbackDate =
-        lastFeedbackTime != null ? DateTime.parse(lastFeedbackTime) : null;
-    final currentTime = DateTime.now();
+    // Revisa si el feedback ya fue enviado antes
+    _isFeedbackSubmitted = prefs.getBool('feedbackSubmitted') ?? false;
 
-    if (lastFeedbackDate != null &&
-        currentTime.difference(lastFeedbackDate).inHours < 8) {
-      _isFeedbackSubmitted = true;
-    } else {
-      _isFeedbackSubmitted = false;
+    if (!_isFeedbackSubmitted) {
       _timer = Timer(Duration(seconds: secFeedbackTimer), () {
         _showFeedbackModal();
       });
@@ -68,30 +57,115 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   String? _selectedFeedback;
   String _userComment = '';
 
-  String normalizeText(String input) {
-    String normalized =
-        input.replaceAll(RegExp(r'[^a-zA-Z0-9 ]'), '').toLowerCase();
-    return normalized;
-  }
-
   void _showFeedbackModal() {
+    String? _errorFeedback;
+
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return FeedbackDialog(
-            onSubmitFeedback: (selectedFeedback, userComment) {
-          setState(() {
-            _selectedFeedback = selectedFeedback;
-            _userComment = normalizeText(userComment);
-          });
-          _submitFeedback(selectedFeedback, userComment);
-        });
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text(
+                '¿Qué tál tu experiencia con el Menú Digital?',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w300),
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ...['sad', 'normal', 'happy']
+                          .map((type) {
+                            String assetName;
+                            switch (type) {
+                              case 'sad':
+                                assetName = 'assets/feedback/triste.png';
+                                break;
+                              case 'normal':
+                                assetName = 'assets/feedback/confuso.png';
+                                break;
+                              case 'happy':
+                              default:
+                                assetName = 'assets/feedback/feliz.png';
+                                break;
+                            }
+                            return Row(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedFeedback = type;
+                                      _errorFeedback = null;
+                                    });
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.all(4),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: _selectedFeedback == type
+                                          ? Colors.blue
+                                          : Colors.transparent,
+                                    ),
+                                    child: Opacity(
+                                      opacity:
+                                          _selectedFeedback == type ? 1.0 : 0.5,
+                                      child: Image.asset(assetName, width: 40),
+                                    ),
+                                  ),
+                                ),
+                                if (type != 'happy') SizedBox(width: 20),
+                              ],
+                            );
+                          })
+                          .expand((widget) => [widget])
+                          .toList(),
+                    ],
+                  ),
+                  TextField(
+                    decoration:
+                        InputDecoration(hintText: 'Deja un comentario...'),
+                    onChanged: (value) {
+                      _userComment = value;
+                    },
+                  ),
+                  if (_errorFeedback != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Text(
+                        _errorFeedback!,
+                        style: TextStyle(color: Colors.red, fontSize: 14),
+                      ),
+                    ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    if (_selectedFeedback == null) {
+                      setState(() {
+                        _errorFeedback =
+                            'Por favor, selecciona un emoji antes de enviar.';
+                      });
+                    } else {
+                      _submitFeedback('withComment');
+                      Navigator.of(context).pop();
+                    }
+                  },
+                  child: Text('Enviar'),
+                ),
+              ],
+            );
+          },
+        );
       },
     );
   }
 
-  void _submitFeedback(String feedbackType, String userComment) async {
+  void _submitFeedback(String feedbackType) async {
     if (_selectedFeedback == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -133,28 +207,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     });
 
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('lastFeedbackTime', DateTime.now().toIso8601String());
+    await prefs.setBool('feedbackSubmitted', true);
 
     setState(() {
       _isFeedbackSubmitted = true;
       _selectedFeedback = null;
       _userComment = '';
     });
-  }
-
-  void _updateSelectedCatalog(String newCatalogId, int newCategoryIndex) {
-    final branchCatalogProvider =
-        Provider.of<BranchCatalogProvider>(context, listen: false);
-    final catalogs = branchCatalogProvider.branchCatalog?.catalogs ?? [];
-    int newIndex = catalogs.indexWhere((catalog) => catalog.id == newCatalogId);
-
-    if (newIndex != -1) {
-      setState(() {
-        _catalogTabController!.animateTo(newIndex);
-        print(newCategoryIndex);
-        _bloc.onFilteredCategorySelected(newCategoryIndex);
-      });
-    }
   }
 
   @override
@@ -188,57 +247,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     _bloc.dispose();
     _catalogTabController?.dispose();
     _bloc.categoryTabController?.dispose();
-    _searchController.removeListener(_onSearchChanged);
-    _searchController.dispose();
     super.dispose();
   }
-
-  void _onSearchChanged() {
-    String searchText = _searchController.text.trim();
-    final branchCatalogProvider =
-        Provider.of<BranchCatalogProvider>(context, listen: false);
-    List<Item> allItems = branchCatalogProvider.branchCatalog?.catalogs
-            .expand((catalog) =>
-                catalog.categories.expand((category) => category.products))
-            .toList() ??
-        [];
-
-    if (searchText.length >= 2) {
-      List<Item> filteredItems = allItems
-          .where((item) =>
-              item.alias.toLowerCase().contains(searchText.toLowerCase()))
-          .toList();
-
-      if (filteredItems.isNotEmpty) {
-        _bloc.scrollController.removeListener(_bloc.onScrollListener);
-
-        String? firstItemCatalogId = branchCatalogProvider.branchCatalog
-            ?.findCatalogIdForItem(filteredItems.first.id);
-        int? firstItemCategoryId = branchCatalogProvider.branchCatalog
-            ?.findCategoryIndexForItem(filteredItems.first.id);
-
-        if (firstItemCatalogId != null) {
-          _updateSelectedCatalog(firstItemCatalogId, firstItemCategoryId!);
-        }
-        List<Section> filteredSections =
-            filteredItems.map((item) => Section(item: item)).toList();
-
-        setState(() {
-          _filteredItems = filteredSections;
-        });
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _bloc.scrollController.addListener(_bloc.onScrollListener);
-        });
-      }
-    } else {
-      setState(() {
-        _filteredItems = [];
-      });
-    }
-  }
-
-  final TextEditingController _searchController = TextEditingController();
-  bool _isSearching = false;
 
   @override
   Widget build(BuildContext context) {
@@ -283,36 +293,29 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             children: [
                               Container(
                                 height: 50,
-                                child: Row(
-                                  children: [
-                                    IconButton(
-                                      icon: Icon(
-                                        Icons.keyboard_arrow_left_outlined,
-                                        color: Colors.white,
-                                        size: 50,
-                                      ),
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                    ),
-                                    FittedBox(
-                                      fit: BoxFit.scaleDown,
-                                      child: Expanded(
-                                        child: AutoSizeText(
-                                          brandName + " - " + branchName,
-                                          style:
-                                              GoogleFonts.montserratAlternates(
-                                                  fontSize: 20,
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold),
-                                          minFontSize: 10,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          textAlign: TextAlign.center,
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: RichText(
+                                    textAlign: TextAlign.center,
+                                    text: TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: brandName + " - ",
+                                          style: GoogleFonts.pacifico(
+                                            fontSize: 30,
+                                            color: Colors.white,
+                                          ),
                                         ),
-                                      ),
+                                        TextSpan(
+                                          text: branchName,
+                                          style: GoogleFonts.pacifico(
+                                            fontSize: 30,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
+                                  ),
                                 ),
                               ),
                               Container(
@@ -379,33 +382,26 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                         child: Container(
                                           child: Consumer<ScrollTabBarBLoC>(
                                             builder: (context, bloc, child) {
-                                              List<Section> itemsToDisplay =
-                                                  _filteredItems.isNotEmpty
-                                                      ? _filteredItems
-                                                          .cast<Section>()
-                                                      : bloc.items
-                                                          .cast<Section>();
                                               return ListView.builder(
                                                 controller:
                                                     bloc.scrollController,
-                                                itemCount:
-                                                    itemsToDisplay.length,
+                                                itemCount: bloc.items.length,
                                                 padding:
                                                     const EdgeInsets.symmetric(
                                                         horizontal: 20),
                                                 itemBuilder: (context, index) {
-                                                  final section =
-                                                      itemsToDisplay[index];
-                                                  if (section.isCategory) {
-                                                    // Si es una categoría
+                                                  final item =
+                                                      bloc.items[index];
+                                                  if (item.isCategory) {
                                                     return _CategoryItem(
-                                                        section.category!);
-                                                  } else if (section.item !=
-                                                      null) {
-                                                    return _ProductItem(
-                                                        section.item!);
+                                                        item.category!);
                                                   } else {
-                                                    return Container();
+                                                    if (item.item != null) {
+                                                      return _ProductItem(
+                                                          item.item!);
+                                                    } else {
+                                                      return Container();
+                                                    }
                                                   }
                                                 },
                                               );
@@ -424,7 +420,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                                 GestureDetector(
                                                   onTap: () {
                                                     _launchUrl(Uri.parse(
-                                                        'https://landing.4urest.mx/'));
+                                                        'https://www.4urest.mx'));
                                                   },
                                                   child: Text(
                                                     'Diseñado por ',
@@ -440,7 +436,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                                 GestureDetector(
                                                   onTap: () {
                                                     _launchUrl(Uri.parse(
-                                                        'https://landing.4urest.mx/'));
+                                                        'https://www.4urest.mx'));
                                                   },
                                                   child: Image.asset(
                                                     'assets/images/tools/4uRestFont-white.png',
@@ -469,89 +465,29 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           Positioned(
             bottom: 10,
             left: 10,
-            child: Row(
-              children: [
-                FloatingActionButton(
-                  onPressed: () {
-                    setState(() {
-                      _isSearching = !_isSearching;
-                      if (_isSearching) {
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          _searchFocusNode.requestFocus();
-                        });
-                      } else {
-                        _searchFocusNode.unfocus();
-                        _searchController.clear();
-                      }
-                    });
-                  },
-                  child: Icon(Icons.search_rounded),
-                  heroTag: "searchFAB",
-                  backgroundColor: Color(0xFFE57734),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 15.0),
-                  child: AnimatedContainer(
-                    width: _isSearching ? 215 : 0,
-                    height: 48,
-                    duration: Duration(milliseconds: 500),
-                    curve: Curves.easeInOut,
-                    child: _isSearching
-                        ? Container(
-                            decoration: BoxDecoration(
-                              color: Colors.grey[200],
-                              borderRadius: BorderRadius.circular(4.0),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black26,
-                                  blurRadius: 8.0,
-                                  offset: Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: TextField(
-                                focusNode: _searchFocusNode,
-                                controller: _searchController,
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  hintText: 'Buscar...',
-                                ),
-                              ),
-                            ),
-                          )
-                        : null,
-                  ),
-                ),
-              ],
+            child: FloatingActionButton(
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => WelcomeScreen()));
+              },
+              child: Icon(Icons.arrow_back_ios),
+              heroTag: "homeFAB",
+              backgroundColor: Color(0xFFE57734),
             ),
           ),
           Positioned(
-            bottom: 10,
-            right: 10,
-            child: FloatingActionButton(
-              onPressed: () {
-                if (_isSearching) {
-                  setState(() {
-                    _searchController.clear();
-                    _isSearching = false;
-                    _filteredItems.clear();
-                  });
-                } else {
+              bottom: 10,
+              right: 10,
+              child: FloatingActionButton(
+                onPressed: () {
                   _bloc.scrollController.animateTo(0,
                       duration: Duration(milliseconds: 500),
                       curve: Curves.easeOut);
-                }
-              },
-              child: Icon(_isSearching
-                  ? Icons.clear
-                  : Icons.keyboard_double_arrow_up_outlined),
-              backgroundColor: Colors.blue,
-              heroTag: "upFAB",
-            ),
-          ),
+                },
+                child: Icon(Icons.keyboard_double_arrow_up_outlined),
+                backgroundColor: Colors.blue,
+                heroTag: "upFAB",
+              )),
         ]),
       ),
     );
@@ -599,8 +535,7 @@ class _CategoryItem extends StatelessWidget {
         alignment: Alignment.centerLeft,
         child: Text(
           category.name,
-          style: GoogleFonts.montserratAlternates(
-              fontSize: 24, color: Colors.white, fontWeight: FontWeight.bold),
+          style: GoogleFonts.pacifico(fontSize: 24, color: Colors.white),
         ),
       ),
     );
